@@ -48,11 +48,11 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
       () => console.log('pageSize stream ended')
     );
 
-    // this.urlState.allParams.subscribe(
-    //   params => console.log(`allParams is now`, params),
-    //   err => console.error(err),
-    //   () => console.log('allParamsStream ended')
-    // );
+    this.urlState.allParams.subscribe(
+      params => console.log(`allParams is now`, params),
+      err => console.error(err),
+      () => console.log('allParamsStream ended')
+    );
   }
 
   ngOnDestroy() {

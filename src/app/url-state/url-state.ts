@@ -1,5 +1,5 @@
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay, takeUntil } from 'rxjs/operators';
 
 import { BehaviorSubjectsFor, NavigationMode, ObservablesFor, StringsFor, UrlParamDefsFor, UrlStateParamDef } from './url-state.types';
@@ -7,13 +7,19 @@ import { BehaviorSubjectsFor, NavigationMode, ObservablesFor, StringsFor, UrlPar
 export class UrlState<T> {
   // Internal
   private paramStringSubjects: BehaviorSubjectsFor<StringsFor<T>>;
+  private combinedParamsStringSubject$: BehaviorSubject<StringsFor<T>>;
   private destroy$: Subject<void>;
 
-  // External
-  private paramObservables: ObservablesFor<T>; // exposed to consumer
+  // External - exposed to consumer
+  private paramObservables: ObservablesFor<T>;
+  private allParams$: Observable<T>;
 
   public get params(): ObservablesFor<T> {
     return this.paramObservables;
+  }
+
+  public get allParams(): Observable<T> {
+    return this.allParams$;
   }
 
   constructor(private router: Router,
@@ -43,13 +49,31 @@ export class UrlState<T> {
       );
     });
 
+    // Setup the `allParams` observable which provides the user with a way of getting the full set of parameters whenever _any_ of them change
+    this.combinedParamsStringSubject$ = new BehaviorSubject<StringsFor<T>>(initialParamStrings);
+    this.allParams$ = this.combinedParamsStringSubject$.pipe(
+      takeUntil(this.destroy$),
+      distinctUntilChanged((prev, curr) => {
+        return Object.keys(this.paramDefs).every(paramName => prev[paramName] === curr[paramName]);
+      }),
+      map(stringValues => {
+        const allParams: Partial<T> = {};
+        Object.keys(this.paramDefs).forEach(paramName => {
+          const paramDef = this.getParamDef(paramName);
+          allParams[paramName] = this.convertParamFromString(stringValues[paramName], paramDef);
+        });
+        return allParams as T;
+      }),
+      shareReplay(1)
+    );
+
     // Watch router for changes
     this.activatedRoute.queryParamMap.pipe(
       takeUntil(this.destroy$),
     ).subscribe(queryParamMap => {
       const currentParamStrings = this.getParamStrings(queryParamMap);
 
-      // this.allParamsSubject$.next(currentParams);
+      this.combinedParamsStringSubject$.next(currentParamStrings);
       Object.keys(currentParamStrings).forEach(paramName => {
         this.paramStringSubjects[paramName].next(currentParamStrings[paramName]);
       });
@@ -57,7 +81,7 @@ export class UrlState<T> {
 
     // Whenever the urlState instance is destroyed, complete all of the streams
     this.destroy$.subscribe(() => {
-      // this.allParamsSubject$.complete();
+      this.combinedParamsStringSubject$.complete();
       Object.keys(paramDefs).forEach(paramName => {
         this.paramStringSubjects[paramName].complete();
       });
