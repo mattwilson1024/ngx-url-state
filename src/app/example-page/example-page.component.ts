@@ -79,6 +79,6 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
   }
 
   public alertCurrentPage() {
-    // alert(`The current page is ${this.urlState.snapshot.page}`);
+    alert(`The current page is ${this.urlState.snapshot.page}`);
   }
 }

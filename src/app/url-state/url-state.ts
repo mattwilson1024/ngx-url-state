@@ -1,6 +1,6 @@
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { distinctUntilChanged, map, shareReplay, takeUntil } from 'rxjs/operators';
+import { distinctUntilChanged, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
 import { BehaviorSubjectsFor, NavigationMode, ObservablesFor, StringsFor, UrlParamDefsFor, UrlStateParamDef } from './url-state.types';
 
@@ -13,6 +13,7 @@ export class UrlState<T> {
   // External - exposed to consumer
   private paramObservables: ObservablesFor<T>;
   private allParams$: Observable<T>;
+  private lastestSnapshot: T;
 
   public get params(): ObservablesFor<T> {
     return this.paramObservables;
@@ -20,6 +21,10 @@ export class UrlState<T> {
 
   public get allParams(): Observable<T> {
     return this.allParams$;
+  }
+
+  public get snapshot(): T {
+    return this.lastestSnapshot;
   }
 
   constructor(private router: Router,
@@ -66,6 +71,12 @@ export class UrlState<T> {
       }),
       shareReplay(1)
     );
+
+    // Store a "snapshot" which is the latest version of all parameters, incase the consumer needs to read the value without observables
+    this.allParams$.pipe(
+      takeUntil(this.destroy$),
+      tap(allParams => this.lastestSnapshot = allParams)
+    ).subscribe();
 
     // Watch router for changes
     this.activatedRoute.queryParamMap.pipe(
