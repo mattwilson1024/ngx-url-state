@@ -20,5 +20,6 @@
 <a routerLink="/example" [queryParams]="{ page: getSeconds() }" queryParamsHandling="merge">Change page via a link</a>
 <div>
   <button (click)="changeParams()">Change Params programatically</button>
+  <button (click)="changeParamsWithoutChangingHistory()">Change params without changing history</button>
   <button (click)="alertCurrentPage()">What page am I on?</button>
 </div>
