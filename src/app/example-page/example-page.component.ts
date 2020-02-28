@@ -2,6 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { UrlStateService } from '../url-state/url-state.service';
+import { ObservableWrapper } from '../url-state/url-state.types';
+
+export interface IExamplePageUrlState {
+  page: number;
+  pageSize: number;
+}
 
 @Component({
   selector: 'app-example-page',
@@ -10,51 +16,36 @@ import { UrlStateService } from '../url-state/url-state.service';
 })
 export class ExamplePageComponent implements OnInit {
 
-  private counter = 0;
+  public urlState: ObservableWrapper<IExamplePageUrlState>;
 
   constructor(private activatedRoute: ActivatedRoute,
-              private urlStateService: UrlStateService) {
-  }
+              private urlStateService: UrlStateService) {}
 
   ngOnInit(): void {
-
-    const listeners = this.urlStateService.listen<IExamplePageUrlState>(this.activatedRoute, {
+    this.urlState = this.urlStateService.listen<IExamplePageUrlState>(this.activatedRoute, {
       page: {
         toString: (value) => value.toString(),
         fromString: (paramString) => parseInt(paramString, 10)
       },
       pageSize: {
         toString: (value) => value.toString(),
-        fromString: (paramString) => parseInt(paramString, 10)
+        fromString: (paramString) => parseInt(paramString, 10),
+        defaultValue: 20 // TODO: Implement support for defaults
       },
     });
 
-    listeners.page.subscribe(
+    this.urlState.page.subscribe(
       page => console.log(`page is now ${page}`),
       err => console.error(err),
-      () => console.log('page stream ended')
+      () => console.log('page stream ended') // TODO: Never happens - need to give this some thought
     );
-
-    // TODO: Remove this:
-    this.startCounter();
   }
 
+  public getSeconds() {
+    return new Date().getSeconds();
+  }
 
-  private startCounter() {
-    setInterval(() => {
-      this.counter++;
-    }, 1000);
+  public alertCurrentPage() {
+    alert(`The current page is ${this.urlState.page.value}`);
   }
 }
-
-
-export interface IExamplePageUrlState {
-  page: number;
-  pageSize: number;
-}
-
-
-
-
-// const x: ObservableWrapper<IExamplePageUrlState>;
-

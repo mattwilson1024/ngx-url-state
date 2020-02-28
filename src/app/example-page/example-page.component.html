@@ -1,3 +1,15 @@
-<p>example-page works!</p>
+<h1>Example Page</h1>
 
-<a routerLink="/example" [queryParams]="{ page: counter }">Change the page</a>
+
+<h2>Current Params</h2>
+<ul>
+  <li>Page: {{ urlState.page | async }}</li>
+  <li>Page Size: {{ urlState.pageSize | async }}</li>
+</ul>
+
+
+<h2>Actions</h2>
+<a routerLink="/example" [queryParams]="{ page: getSeconds() }">Change the page</a>
+<div>
+  <button (click)="alertCurrentPage()">What page am I on?</button>
+</div>

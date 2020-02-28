@@ -11,4 +11,5 @@ export type UrlParamDefs<T> = {
 export interface IUrlStateParamDef<T> {
   toString: (x: T) => string;
   fromString: (x: string) => T;
+  defaultValue?: T;
 }
