@@ -95,6 +95,8 @@ export class UrlState<T> {
       Object.keys(currentParamStrings).forEach(paramName => {
         this.paramStringSubjects[paramName].next(currentParamStrings[paramName]);
       });
+
+      this.applyMissingParamsToUrl();
     });
 
     // Whenever the urlState instance is destroyed, complete all of the streams
