@@ -1,5 +1,9 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 
+export type StringsFor<T> = {
+  [P in keyof T]: string
+};
+
 export type BehaviorSubjectsFor<T> = {
   [P in keyof T]: BehaviorSubject<T[P]>
 };
