@@ -32,7 +32,7 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
       pageSize: {
         toString: (value) => (value * 100).toString(),
         fromString: (paramString) => parseInt(paramString, 10) / 100,
-        defaultValue: 20 // TODO: Implement support for defaults
+        defaultValue: 20
       },
     }, this.componentDestroyed$);
 
@@ -45,14 +45,14 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
     this.urlState.params.pageSize.subscribe(
       pageSize => console.log(`pageSize is now ${pageSize}`),
       err => console.error(err),
-      () => console.log('page stream ended')
+      () => console.log('pageSize stream ended')
     );
 
-    this.urlState.allParams.subscribe(
-      params => console.log(`allParams is now`, params),
-      err => console.error(err),
-      () => console.log('allParamsStream ended')
-    );
+    // this.urlState.allParams.subscribe(
+    //   params => console.log(`allParams is now`, params),
+    //   err => console.error(err),
+    //   () => console.log('allParamsStream ended')
+    // );
   }
 
   ngOnDestroy() {
@@ -79,6 +79,6 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
   }
 
   public alertCurrentPage() {
-    alert(`The current page is ${this.urlState.snapshot.page}`);
+    // alert(`The current page is ${this.urlState.snapshot.page}`);
   }
 }
