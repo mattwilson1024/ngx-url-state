@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { NgxUrlStateService } from './ngx-url-state.service';
+import { UrlStateService } from './url-state.service';
 
 describe('NgxUrlStateService', () => {
-  let service: NgxUrlStateService;
+  let service: UrlStateService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(NgxUrlStateService);
+    service = TestBed.inject(UrlStateService);
   });
 
   it('should be created', () => {

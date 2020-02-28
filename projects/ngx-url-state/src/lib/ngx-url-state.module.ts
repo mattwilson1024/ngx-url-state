@@ -1,12 +1,9 @@
 import { NgModule } from '@angular/core';
-import { NgxUrlStateComponent } from './ngx-url-state.component';
-
-
 
 @NgModule({
-  declarations: [NgxUrlStateComponent],
+  declarations: [],
   imports: [
   ],
-  exports: [NgxUrlStateComponent]
+  exports: []
 })
 export class NgxUrlStateModule { }
