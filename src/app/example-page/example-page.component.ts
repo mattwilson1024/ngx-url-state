@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 
-import { UrlState, UrlStateService } from '../url-state';
+import { NavigationMode, UrlState, UrlStateService } from '../url-state';
 
 export interface IExamplePageUrlState {
   page: number;
@@ -30,14 +30,20 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
         fromString: (paramString) => parseInt(paramString, 10)
       },
       pageSize: {
-        toString: (value) => value.toString(),
-        fromString: (paramString) => parseInt(paramString, 10) * 100,
+        toString: (value) => (value * 100).toString(),
+        fromString: (paramString) => parseInt(paramString, 10) / 100,
         defaultValue: 20 // TODO: Implement support for defaults
       },
     }, this.componentDestroyed$);
 
     this.urlState.params.page.subscribe(
       page => console.log(`page is now ${page}`),
+      err => console.error(err),
+      () => console.log('page stream ended')
+    );
+
+    this.urlState.params.pageSize.subscribe(
+      pageSize => console.log(`pageSize is now ${pageSize}`),
       err => console.error(err),
       () => console.log('page stream ended')
     );
@@ -65,7 +71,14 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
     });
   }
 
+  public changeParamsWithoutChangingHistory() {
+    this.urlState.set({
+      page: this.getSeconds(),
+      pageSize: Math.floor((Math.random() * 100))
+    }, NavigationMode.ReplaceHistory);
+  }
+
   public alertCurrentPage() {
-    alert(`The current page is ${this.urlState.params.page.value}`);
+    alert(`The current page is ${this.urlState.snapshot.page}`);
   }
 }
