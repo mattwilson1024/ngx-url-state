@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
 import { UrlState } from './url-state';
-import { UrlParamDefs } from './url-state.types';
+import { UrlParamDefsFor } from './url-state.types';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UrlStateService {
-  constructor() { }
+  constructor(private router: Router) { }
 
-  public listen<T>(activatedRoute: ActivatedRoute, paramDefs: UrlParamDefs<T>, componentDestroyed$?: Subject<void>): UrlState<T> {
-    return new UrlState<T>(activatedRoute, paramDefs, componentDestroyed$);
+  public listen<T>(activatedRoute: ActivatedRoute, paramDefs: UrlParamDefsFor<T>, componentDestroyed$?: Subject<void>): UrlState<T> {
+    return new UrlState<T>(this.router, activatedRoute, paramDefs, componentDestroyed$);
   }
 }

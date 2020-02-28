@@ -58,6 +58,13 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
     return new Date().getSeconds();
   }
 
+  public changeParams() {
+    this.urlState.set({
+      page: this.getSeconds(),
+      pageSize: Math.floor((Math.random() * 100))
+    });
+  }
+
   public alertCurrentPage() {
     alert(`The current page is ${this.urlState.params.page.value}`);
   }

@@ -17,7 +17,8 @@
 
 
 <h2>Actions</h2>
-<a routerLink="/example" [queryParams]="{ page: getSeconds() }">Change the page</a>
+<a routerLink="/example" [queryParams]="{ page: getSeconds() }">Change params via a link</a>
 <div>
+  <button (click)="changeParams()">Change Params</button>
   <button (click)="alertCurrentPage()">What page am I on?</button>
 </div>

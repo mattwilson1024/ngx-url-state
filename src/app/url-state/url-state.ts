@@ -1,12 +1,12 @@
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
-import { IUrlStateParamDef, ObservableWrapper, UrlParamDefs } from './url-state.types';
+import { BehaviorSubjectsFor, UrlParamDefsFor, UrlStateParamDef } from './url-state.types';
 
 export class UrlState<T> {
   private allParams$: BehaviorSubject<T>;
-  private individualParams: ObservableWrapper<T>;
+  private individualParams: BehaviorSubjectsFor<T>;
 
   private destroy$: Subject<void>;
 
@@ -14,18 +14,21 @@ export class UrlState<T> {
     return this.allParams$;
   }
 
-  public get params(): ObservableWrapper<T> {
-    return this.individualParams as ObservableWrapper<T>;
+  public get params(): BehaviorSubjectsFor<T> {
+    return this.individualParams as BehaviorSubjectsFor<T>;
   }
 
-  constructor(private activatedRoute: ActivatedRoute, paramDefs: UrlParamDefs<T>, componentDestroyed$?: Subject<void>) {
+  constructor(private router: Router,
+              private activatedRoute: ActivatedRoute,
+              private paramDefs: UrlParamDefsFor<T>,
+              componentDestroyed$?: Subject<void>) {
     this.destroy$ = componentDestroyed$ || new Subject<void>();
 
     // Create a BehaviorSubject for allParams
     this.allParams$ = new BehaviorSubject<T>(null);
 
     // Create individual BehaviorSubjects for each defined parameter
-    this.individualParams = {} as ObservableWrapper<T>;
+    this.individualParams = {} as BehaviorSubjectsFor<T>;
     Object.keys(paramDefs).forEach(paramName => {
       this.individualParams[paramName] = new BehaviorSubject(null);
     });
@@ -35,9 +38,10 @@ export class UrlState<T> {
       takeUntil(this.destroy$),
       map(paramMap => {
         const allParamsSnapshot: Partial<T> = {};
+        // TODO: Loop over defs instead? So that we can detect if a key goes missing...
         paramMap.keys.forEach(paramName => {
           const paramValueString = paramMap.get(paramName);
-          const paramDef: IUrlStateParamDef<unknown> = paramDefs[paramName];
+          const paramDef: UrlStateParamDef<unknown> = paramDefs[paramName];
 
           if (paramDef) {
             const convertedFromString = paramDef.fromString(paramValueString);
@@ -59,4 +63,23 @@ export class UrlState<T> {
     });
   }
 
+  set(paramsToChange: Partial<T>): void {
+    const queryParams: Params = {};
+
+    Object.keys(paramsToChange).forEach(paramName => {
+      const paramDef: UrlStateParamDef<unknown> = this.paramDefs[paramName];
+      if (paramDef) {
+        const convertedToString = paramDef.toString(paramsToChange[paramName]);
+        queryParams[paramName] = convertedToString;
+      }
+    });
+
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.activatedRoute,
+        queryParams,
+        queryParamsHandling: 'merge', // remove to replace all query params by provided
+      });
+  }
 }
