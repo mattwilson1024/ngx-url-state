@@ -16,13 +16,17 @@ export type UrlParamDefsFor<T> = {
   [P in keyof T]: UrlStateParamDef<T[P]>
 };
 
-export interface UrlStateParamDef<T> {
-  toString: (param: T) => string;
-  fromString: (stringValue: string) => T;
-  defaultValue?: T;
+export interface UrlStateParamDef<P> {
+  mapper: UrlParamMapper<P>;
+  defaultValue?: P;
 }
 
 export enum NavigationMode {
   AddToHistoryStack,
   ReplaceHistory
+}
+
+export interface UrlParamMapper<P> {
+  toString: (typedValue: P) => string;
+  fromString: (stringValue: string) => P;
 }

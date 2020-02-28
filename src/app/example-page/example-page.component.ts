@@ -2,11 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 
-import { NavigationMode, UrlState, UrlStateService } from '../url-state';
+import { BooleanMapper, IntMapper, NavigationMode, UrlState, UrlStateService } from '../url-state';
 
 export interface IExamplePageUrlState {
   page: number;
   pageSize: number;
+  redText: boolean;
 }
 
 @Component({
@@ -26,14 +27,19 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.urlState = this.urlStateService.listen<IExamplePageUrlState>(this.activatedRoute, {
       page: {
-        toString: (value) => value.toString(),
-        fromString: (paramString) => parseInt(paramString, 10)
+        mapper: IntMapper
       },
       pageSize: {
-        toString: (value) => (value * 100).toString(),
-        fromString: (paramString) => parseInt(paramString, 10) / 100,
+        mapper: {
+          toString: (typedValue: number) => (typedValue * 100).toString(),
+          fromString: (stringValue: string) => parseInt(stringValue, 10) / 100,
+        },
         defaultValue: 20
       },
+      redText: {
+        mapper: BooleanMapper,
+        defaultValue: false
+      }
     }, this.componentDestroyed$);
 
     this.urlState.params.page.subscribe(
@@ -46,6 +52,12 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
       pageSize => console.log(`pageSize is now ${pageSize}`),
       err => console.error(err),
       () => console.log('pageSize stream ended')
+    );
+
+    this.urlState.params.redText.subscribe(
+      redText => console.log(`redText is now ${redText}`),
+      err => console.error(err),
+      () => console.log('page stream ended')
     );
 
     this.urlState.allParams.subscribe(

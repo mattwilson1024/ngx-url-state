@@ -2,6 +2,7 @@ import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
+import { DEFAULT_MAPPER } from './mappers';
 import { BehaviorSubjectsFor, NavigationMode, ObservablesFor, StringsFor, UrlParamDefsFor, UrlStateParamDef } from './url-state.types';
 
 export class UrlState<T> {
@@ -103,16 +104,17 @@ export class UrlState<T> {
     if (stringValue === null || stringValue === undefined) {
       return undefined;
     }
-    // TODO: What if `fromString` is not provided?
-    return paramDef.fromString(stringValue);
+    if (paramDef.mapper) {
+      return paramDef.mapper.fromString(stringValue);
+    }
+    return paramDef.mapper ? paramDef.mapper.fromString(stringValue) : DEFAULT_MAPPER.fromString(stringValue);
   }
 
   private convertParamToString<P>(paramValue: P|null|undefined, paramDef: UrlStateParamDef<P>): string {
     if (paramValue === null || paramValue === undefined) {
       return undefined;
     }
-    // TODO: What if `toString` is not provided?
-    return paramDef.toString(paramValue);
+    return paramDef.mapper ? paramDef.mapper.toString(paramValue) : DEFAULT_MAPPER.toString(paramValue);
   }
 
   private identifyMissingParams(): string[] {
@@ -172,9 +174,9 @@ export class UrlState<T> {
     const queryParams: Params = {};
 
     Object.keys(paramsToChange).forEach(paramName => {
-      const paramDef: UrlStateParamDef<unknown> = this.paramDefs[paramName];
+      const paramDef = this.getParamDef(paramName);
       if (paramDef) {
-        const convertedToString = paramDef.toString(paramsToChange[paramName]);
+        const convertedToString = this.convertParamToString(paramsToChange[paramName], paramDef);
         queryParams[paramName] = convertedToString;
       }
     });
