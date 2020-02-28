@@ -1,10 +1,18 @@
 <h1>Example Page</h1>
 
 
-<h2>Current Params</h2>
+<h2>Individual Parameter Streams</h2>
 <ul>
   <li>Page: {{ urlState.params.page | async }}</li>
   <li>Page Size: {{ urlState.params.pageSize | async }}</li>
+</ul>
+
+
+<h2>All Parameters Stream</h2>
+<ul>
+  <code>
+    {{ urlState.allParams | async | json }}
+  </code>
 </ul>
 
 
