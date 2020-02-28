@@ -3,13 +3,18 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
 import { DEFAULT_MAPPER } from './mappers';
-import { BehaviorSubjectsFor, NavigationMode, ObservablesFor, StringsFor, UrlParamDefsFor, UrlStateParamDef } from './url-state.types';
+import { BehaviorSubjectsFor, NavigationMode, ObservablesFor, StringsFor, UrlParamDefsFor, UrlStateConfig, UrlStateParamDef } from './url-state.types';
 
 export class UrlState<T> {
-  // Internal
+  // Config properties
+  private paramDefs: UrlParamDefsFor<T>;
+  private activatedRoute: ActivatedRoute;
+  private router: Router;
+  private destroy$: Subject<void>;
+
+  // Internal state storage
   private paramStringSubjects: BehaviorSubjectsFor<StringsFor<T>>;
   private combinedParamsStringSubject$: BehaviorSubject<StringsFor<T>>;
-  private destroy$: Subject<void>;
 
   // External - exposed to consumer
   private paramObservables: ObservablesFor<T>;
@@ -28,11 +33,12 @@ export class UrlState<T> {
     return this.lastestSnapshot;
   }
 
-  constructor(private router: Router,
-              private activatedRoute: ActivatedRoute,
-              private paramDefs: UrlParamDefsFor<T>,
-              componentDestroyed$?: Subject<void>) {
-    this.destroy$ = componentDestroyed$ || new Subject<void>();
+  constructor(config: UrlStateConfig<T>, router: Router) {
+    // Store config
+    this.activatedRoute = config.activatedRoute;
+    this.destroy$ = config.componentDestroyed$ || new Subject<void>();
+    this.paramDefs = config.paramDefinitions;
+    this.router = router;
 
     // Grab the initial params, including any defaults which we pre-emptyively assume will be applied
     const initialParamStrings = this.getParamStrings(this.activatedRoute.snapshot.queryParamMap);
@@ -43,7 +49,7 @@ export class UrlState<T> {
     // Create individual BehaviorSubjects for each defined parameter
     this.paramStringSubjects = {} as BehaviorSubjectsFor<StringsFor<T>>;
     this.paramObservables = {} as ObservablesFor<T>;
-    Object.keys(paramDefs).forEach(paramName => {
+    Object.keys(this.paramDefs).forEach(paramName => {
       const paramDef = this.getParamDef(paramName);
       const paramStringSubject$ = new BehaviorSubject(initialParamStrings[paramName]);
       this.paramStringSubjects[paramName] = paramStringSubject$;
@@ -94,7 +100,7 @@ export class UrlState<T> {
     // Whenever the urlState instance is destroyed, complete all of the streams
     this.destroy$.subscribe(() => {
       this.combinedParamsStringSubject$.complete();
-      Object.keys(paramDefs).forEach(paramName => {
+      Object.keys(this.paramDefs).forEach(paramName => {
         this.paramStringSubjects[paramName].complete();
       });
     });

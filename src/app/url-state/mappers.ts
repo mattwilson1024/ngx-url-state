@@ -1,4 +1,18 @@
-import { UrlParamMapper } from './url-state.types';
+// Mapper Interface
+
+export interface UrlParamMapper<P> {
+  toString: (typedValue: P) => string;
+  fromString: (stringValue: string) => P;
+}
+
+// Fallback Mapper - Used if no mapper is provided for a given parameter
+
+export const DEFAULT_MAPPER: UrlParamMapper<any> = {
+  toString: typedValue => typedValue as string,
+  fromString: stringValue => stringValue
+};
+
+// Built-in mappers for common types
 
 export const StringMapper: UrlParamMapper<string> = {
   toString: typedValue => typedValue,
@@ -18,9 +32,4 @@ export const FloatMapper: UrlParamMapper<number> = {
 export const BooleanMapper: UrlParamMapper<boolean> = {
   toString: typedValue => typedValue.toString(),
   fromString: stringValue => stringValue.toUpperCase() === 'TRUE'
-};
-
-export const DEFAULT_MAPPER: UrlParamMapper<any> = {
-  toString: typedValue => typedValue as string,
-  fromString: stringValue => stringValue
 };

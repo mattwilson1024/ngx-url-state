@@ -1,4 +1,7 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+
+import { UrlParamMapper } from './mappers';
 
 export type StringsFor<T> = {
   [P in keyof T]: string
@@ -26,7 +29,8 @@ export enum NavigationMode {
   ReplaceHistory
 }
 
-export interface UrlParamMapper<P> {
-  toString: (typedValue: P) => string;
-  fromString: (stringValue: string) => P;
+export interface UrlStateConfig<T> {
+  activatedRoute: ActivatedRoute;
+  componentDestroyed$: Subject<void>;
+  paramDefinitions: UrlParamDefsFor<T>;
 }

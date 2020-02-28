@@ -25,43 +25,47 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
               private urlStateService: UrlStateService) {}
 
   ngOnInit(): void {
-    this.urlState = this.urlStateService.listen<IExamplePageUrlState>(this.activatedRoute, {
-      page: {
-        mapper: IntMapper
-      },
-      pageSize: {
-        mapper: {
-          toString: (typedValue: number) => (typedValue * 100).toString(),
-          fromString: (stringValue: string) => parseInt(stringValue, 10) / 100,
+    this.urlState = this.urlStateService.listen<IExamplePageUrlState>({
+      activatedRoute: this.activatedRoute,
+      componentDestroyed$: this.componentDestroyed$,
+      paramDefinitions: {
+        page: {
+          mapper: IntMapper
         },
-        defaultValue: 20
-      },
-      redText: {
-        mapper: BooleanMapper,
-        defaultValue: false
+        pageSize: {
+          mapper: {
+            toString: (typedValue: number) => (typedValue * 100).toString(),
+            fromString: (stringValue: string) => parseInt(stringValue, 10) / 100,
+          },
+          defaultValue: 20
+        },
+        redText: {
+          mapper: BooleanMapper,
+          defaultValue: false
+        }
       }
-    }, this.componentDestroyed$);
+    });
 
     this.urlState.params.page.subscribe(
-      page => console.log(`page is now ${page}`),
+      page => console.log(`page = ${page}`),
       err => console.error(err),
       () => console.log('page stream ended')
     );
 
     this.urlState.params.pageSize.subscribe(
-      pageSize => console.log(`pageSize is now ${pageSize}`),
+      pageSize => console.log(`pageSize = ${pageSize}`),
       err => console.error(err),
       () => console.log('pageSize stream ended')
     );
 
     this.urlState.params.redText.subscribe(
-      redText => console.log(`redText is now ${redText}`),
+      redText => console.log(`redText = ${redText}`),
       err => console.error(err),
-      () => console.log('page stream ended')
+      () => console.log('redText stream ended')
     );
 
     this.urlState.allParams.subscribe(
-      params => console.log(`allParams is now`, params),
+      params => console.log(`allParams = `, params),
       err => console.error(err),
       () => console.log('allParamsStream ended')
     );

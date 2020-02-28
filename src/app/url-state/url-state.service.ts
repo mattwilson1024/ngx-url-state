@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { UrlState } from './url-state';
-import { UrlParamDefsFor } from './url-state.types';
+import { UrlStateConfig } from './url-state.types';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +10,7 @@ import { UrlParamDefsFor } from './url-state.types';
 export class UrlStateService {
   constructor(private router: Router) { }
 
-  public listen<T>(activatedRoute: ActivatedRoute, paramDefs: UrlParamDefsFor<T>, componentDestroyed$?: Subject<void>): UrlState<T> {
-    return new UrlState<T>(this.router, activatedRoute, paramDefs, componentDestroyed$);
+  public listen<T>(config: UrlStateConfig<T>): UrlState<T> {
+    return new UrlState<T>(config, this.router);
   }
 }
