@@ -1,8 +1,12 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
+import { ExamplePageComponent } from './example-page/example-page.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  { path: '', redirectTo: '/example', pathMatch: 'full' },
+  { path: 'example', component: ExamplePageComponent }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
