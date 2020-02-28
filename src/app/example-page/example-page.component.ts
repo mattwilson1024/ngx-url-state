@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
 
-import { UrlStateService } from '../url-state/url-state.service';
-import { ObservableWrapper } from '../url-state/url-state.types';
+import { UrlState, UrlStateService } from '../url-state';
 
 export interface IExamplePageUrlState {
   page: number;
@@ -14,9 +14,11 @@ export interface IExamplePageUrlState {
   templateUrl: './example-page.component.html',
   styleUrls: ['./example-page.component.scss']
 })
-export class ExamplePageComponent implements OnInit {
+export class ExamplePageComponent implements OnInit, OnDestroy {
 
-  public urlState: ObservableWrapper<IExamplePageUrlState>;
+  public urlState: UrlState<IExamplePageUrlState>;
+
+  private componentDestroyed$ = new Subject<void>();
 
   constructor(private activatedRoute: ActivatedRoute,
               private urlStateService: UrlStateService) {}
@@ -32,13 +34,18 @@ export class ExamplePageComponent implements OnInit {
         fromString: (paramString) => parseInt(paramString, 10),
         defaultValue: 20 // TODO: Implement support for defaults
       },
-    });
+    }, this.componentDestroyed$);
 
-    this.urlState.page.subscribe(
+    this.urlState.params.page.subscribe(
       page => console.log(`page is now ${page}`),
       err => console.error(err),
-      () => console.log('page stream ended') // TODO: Never happens - need to give this some thought
+      () => console.log('page stream ended')
     );
+  }
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
   }
 
   public getSeconds() {
@@ -46,6 +53,6 @@ export class ExamplePageComponent implements OnInit {
   }
 
   public alertCurrentPage() {
-    alert(`The current page is ${this.urlState.page.value}`);
+    alert(`The current page is ${this.urlState.params.page.value}`);
   }
 }
