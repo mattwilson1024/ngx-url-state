@@ -31,7 +31,7 @@ export class ExamplePageComponent implements OnInit, OnDestroy {
       },
       pageSize: {
         toString: (value) => value.toString(),
-        fromString: (paramString) => parseInt(paramString, 10),
+        fromString: (paramString) => parseInt(paramString, 10) * 100,
         defaultValue: 20 // TODO: Implement support for defaults
       },
     }, this.componentDestroyed$);

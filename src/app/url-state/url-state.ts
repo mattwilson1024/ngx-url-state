@@ -38,13 +38,12 @@ export class UrlState<T> {
       takeUntil(this.destroy$),
       map(paramMap => {
         const allParamsSnapshot: Partial<T> = {};
-        // TODO: Loop over defs instead? So that we can detect if a key goes missing...
-        paramMap.keys.forEach(paramName => {
-          const paramValueString = paramMap.get(paramName);
+        Object.keys(paramDefs).forEach(paramName => {
+          const paramValueString = paramMap.has(paramName) ? paramMap.get(paramName) : undefined; // TODO: Consider allowing configuration for implicit value to assume if not found in the url?
           const paramDef: UrlStateParamDef<unknown> = paramDefs[paramName];
 
           if (paramDef) {
-            const convertedFromString = paramDef.fromString(paramValueString);
+            const convertedFromString = this.convertParamFromString(paramValueString, paramDef);
 
             allParamsSnapshot[paramName] = convertedFromString;
             this.individualParams[paramName].next(convertedFromString);
@@ -63,7 +62,15 @@ export class UrlState<T> {
     });
   }
 
-  set(paramsToChange: Partial<T>): void {
+  private convertParamFromString<P>(stringValue: string|null|undefined, paramDef: UrlStateParamDef<P>): P {
+    if (stringValue === null || stringValue === undefined) {
+      return undefined;
+    }
+    // TODO: What if `fromString` is not provided?
+    return paramDef.fromString(stringValue);
+  }
+
+  public set(paramsToChange: Partial<T>): void {
     const queryParams: Params = {};
 
     Object.keys(paramsToChange).forEach(paramName => {
