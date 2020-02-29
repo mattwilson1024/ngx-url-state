@@ -1,16 +1,19 @@
 {
   "name": "ngx-url-state",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "author": "Matt Wilson",
+  "description": "A powerful yet flexible library for handling stateful URLs in Angular applications",
+  "repository": "https://github.com/mattwilson1024/ngx-url-state",
+  "license": "MIT",
+  "private": false,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build ngx-url-state --prod",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "build-lib": "ng build ngx-url-state --prod"
+    "e2e": "ng e2e"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "~9.0.2",
     "@angular/common": "~9.0.2",
