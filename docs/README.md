@@ -4,4 +4,4 @@ A powerful yet flexible library for handling stateful URLs in Angular applicatio
 
 ## Docs coming soon
 
-The docs are a work in progress and will be updated soon.
+The docs are a work in progress and will be updated soon...
