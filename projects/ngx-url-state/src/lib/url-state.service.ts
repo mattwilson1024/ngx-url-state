@@ -7,7 +7,7 @@ import { UrlStateConfig } from './url-state.types';
 @Injectable({
   providedIn: 'root'
 })
-export class NgxUrlStateService {
+export class UrlStateService {
   constructor(private router: Router) { }
 
   public listen<T>(config: UrlStateConfig<T>): UrlState<T> {
