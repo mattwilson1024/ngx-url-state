@@ -8,6 +8,5 @@
 module.exports = {
   someSidebar: {
     Setup: ['getting-started'],
-    Docusaurus: ['doc1', 'doc2', 'doc3'],
   },
 };
