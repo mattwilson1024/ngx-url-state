@@ -1,7 +1,7 @@
 module.exports = {
   title: 'ngx-url-state',
   tagline: 'A powerful yet flexible library for handling stateful URLs in Angular applications.',
-  url: 'https://github.io/mattwilson1024',
+  url: 'https://mattwilson1024.github.io',
   baseUrl: '/ngx-url-state/',
   favicon: 'img/favicon.ico',
   organizationName: 'mattwilson1024', // Usually your GitHub org/user name.
