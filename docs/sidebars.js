@@ -7,6 +7,8 @@
 
 module.exports = {
   someSidebar: {
-    Setup: ['getting-started'],
+    Background: ['introduction', 'motivation'],
+    Basics: ['installation-and-setup', 'defining-mappers', 'defining-default-values', 'reading-parameters', 'updating-state'],
+    Advanced: ['advanced'],
   },
 };

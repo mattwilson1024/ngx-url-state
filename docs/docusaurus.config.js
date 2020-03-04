@@ -14,7 +14,7 @@ module.exports = {
         src: 'img/logo.svg',
       },
       links: [
-        {to: 'docs/getting-started', label: 'Docs', position: 'left'},
+        {to: 'docs/introduction', label: 'Docs', position: 'left'},
         {
           href: 'https://github.com/mattwilson1024/ngx-url-state',
           label: 'GitHub',
