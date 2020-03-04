@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "ngx-url-state": "^0.0.2"
+  }
+}
