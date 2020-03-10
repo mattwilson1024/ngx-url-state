@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IntMapper, UrlState, UrlStateService } from 'ngx-url-state';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { IntMapper, StringMapper, UrlState, UrlStateService } from 'ngx-url-state';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 
 import { CharacterDataService } from '../character-data/character-data.service';
 import { ICharacter, IPaginatedResultSet } from '../character-data/character-models';
@@ -10,6 +11,7 @@ import { ICharacter, IPaginatedResultSet } from '../character-data/character-mod
 interface ICharactersParams {
   page: number;
   pageSize: number;
+  search?: string;
 }
 
 @Component({
@@ -23,7 +25,8 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
 
   public resultSet$: Observable<IPaginatedResultSet<ICharacter>>;
 
-  private componentDestroyed$: BehaviorSubject<void>;
+  private componentDestroyed$ = new Subject<void>();
+  public searchField: FormControl = new FormControl('');
 
   constructor(private activatedRoute: ActivatedRoute,
               private urlStateService: UrlStateService,
@@ -42,11 +45,25 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
           mapper: IntMapper,
           defaultValue: 5
         },
+        search: {
+          mapper: StringMapper
+        }
       }
     });
 
-    this.resultSet$ = combineLatest([this.urlState.params.page, this.urlState.params.pageSize]).pipe(
-      switchMap(([page, pageSize]) => this.characterDataService.getCharacters$(page, pageSize))
+    this.resultSet$ = combineLatest([
+      this.urlState.params.page,
+      this.urlState.params.pageSize,
+      this.urlState.params.search
+    ]).pipe(
+      switchMap(([page, pageSize, search]) => this.characterDataService.getCharacters$(page, pageSize, search))
+    );
+
+    this.searchField.valueChanges.pipe(
+      takeUntil(this.componentDestroyed$),
+      debounceTime(500)
+    ).subscribe(
+      newSearchTerm => this.changeSearch(newSearchTerm)
     );
   }
 
@@ -65,6 +82,12 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
     this.urlState.set({
       page: 1,
       pageSize: newPageSize
+    });
+  }
+
+  public changeSearch(newSearchTerm: string): void {
+    this.urlState.set({
+      search: newSearchTerm || null
     });
   }
 }

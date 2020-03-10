@@ -11,13 +11,15 @@ export class CharacterDataService {
 
   constructor() { }
 
-  getCharacters$(page: number, pageSize: number): Observable<IPaginatedResultSet<ICharacter>> {
+  getCharacters$(page: number, pageSize: number, searchTerm?: string): Observable<IPaginatedResultSet<ICharacter>> {
     const startIndex = (page - 1) * pageSize;
-    const matchingCharacters = HARRY_POTTER_CHARACTERS;
+    const matchingCharacters = HARRY_POTTER_CHARACTERS.filter(character => !searchTerm
+                          || character.firstName.toLowerCase().includes(searchTerm.toLowerCase())
+                          || character.lastName.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const characters = matchingCharacters
       .slice(startIndex, startIndex + pageSize)
-      .sort((char1, char2) => char1.lastName.localeCompare(char2.lastName));
+      .sort((character1, character2) => character1.lastName.localeCompare(character2.lastName));
 
     const paginatedResultSet: IPaginatedResultSet<ICharacter> = {
       results: characters,

@@ -1,8 +1,14 @@
 <div class="characters-page">
 
+  <input
+    type="text"
+    class="search-input"
+    [formControl]="searchField"
+    nz-input
+    placeholder="Search" />
+
   <main *ngIf="resultSet$ | async as resultSet">
     <h1>Results</h1>
-
     <app-character-card
       *ngFor="let character of resultSet.results"
       [character]="character">
