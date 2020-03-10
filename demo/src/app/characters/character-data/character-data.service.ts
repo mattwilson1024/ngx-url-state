@@ -13,7 +13,7 @@ export class CharacterDataService {
 
   getCharacters$(page: number, pageSize: number, searchTerm?: string): Observable<IPaginatedResultSet<ICharacter>> {
     const startIndex = (page - 1) * pageSize;
-    const searchTermLowerCase = searchTerm?.toLowerCase();
+    const searchTermLowerCase = searchTerm ? searchTerm.toLowerCase() : '';
     const matchingCharacters = HARRY_POTTER_CHARACTERS.filter(character => !searchTerm
                           || character.firstName.toLowerCase().includes(searchTermLowerCase)
                           || character.lastName.toLowerCase().includes(searchTermLowerCase)

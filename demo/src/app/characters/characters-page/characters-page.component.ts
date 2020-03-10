@@ -59,7 +59,7 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
       switchMap(([page, pageSize, search]) => this.characterDataService.getCharacters$(page, pageSize, search))
     );
 
-    this.searchField = new FormControl(this.urlState.snapshot.search ?? '');
+    this.searchField = new FormControl(this.urlState.snapshot.search || '');
     this.searchField.valueChanges.pipe(
       takeUntil(this.componentDestroyed$),
       debounceTime(500)
