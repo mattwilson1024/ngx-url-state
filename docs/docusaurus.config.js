@@ -20,7 +20,7 @@ module.exports = {
           label: 'GitHub',
           position: 'right',
         },
-      ],
+      ]
     },
     footer: {
       style: 'dark',
