@@ -14,6 +14,7 @@
     [nzPageSize]="urlState.params.pageSize | async"
     [nzTotal]="(resultSet$ | async)?.total"
     [nzShowSizeChanger]="true"
+    [nzPageSizeOptions]="[5, 10, 20, 50]"
     (nzPageIndexChange)="changePage($event)"
     (nzPageSizeChange)="changePageSize($event)">
   </nz-pagination>
