@@ -1,7 +1,3 @@
 # ngx-url-state
 
-A powerful yet flexible library for handling stateful URLs in Angular applications. 
-
-## Docs coming soon
-
-The docs are a work in progress and will be updated soon.
+This directory holds the source for the ngx-url-state library (projects/ngx-url-state) and a basic test app which is useful during development.
