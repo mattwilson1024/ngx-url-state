@@ -87,7 +87,8 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
 
   public changeSearch(newSearchTerm: string): void {
     this.urlState.set({
-      search: newSearchTerm || null
+      search: newSearchTerm || null,
+      page: 1
     });
   }
 }
