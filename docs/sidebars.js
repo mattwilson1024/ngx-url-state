@@ -8,6 +8,7 @@
 module.exports = {
   someSidebar: {
     Background: ['introduction', 'motivation'],
+    Demo: ['demo'],
     Basics: ['installation-and-setup', 'defining-mappers', 'defining-default-values', 'reading-parameters', 'updating-state'],
     Advanced: ['advanced'],
   },
