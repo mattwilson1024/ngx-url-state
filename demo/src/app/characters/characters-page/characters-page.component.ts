@@ -5,7 +5,7 @@ import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { CharacterDataService } from '../character-data/character-data.service';
-import { ICharacter } from '../character-data/character-models';
+import { ICharacter, IPaginatedResultSet } from '../character-data/character-models';
 
 interface ICharactersParams {
   page: number;
@@ -21,7 +21,7 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
 
   public urlState: UrlState<ICharactersParams>;
 
-  public characters$: Observable<ICharacter[]>;
+  public resultSet$: Observable<IPaginatedResultSet<ICharacter>>;
 
   private componentDestroyed$: BehaviorSubject<void>;
 
@@ -45,7 +45,7 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.characters$ = combineLatest([this.urlState.params.page, this.urlState.params.pageSize]).pipe(
+    this.resultSet$ = combineLatest([this.urlState.params.page, this.urlState.params.pageSize]).pipe(
       switchMap(([page, pageSize]) => this.characterDataService.getCharacters$(page, pageSize))
     );
   }
@@ -55,4 +55,16 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
     this.componentDestroyed$.complete();
   }
 
+  public changePage(newPage: number): void {
+    this.urlState.set({
+      page: newPage
+    });
+  }
+
+  public changePageSize(newPageSize: number): void {
+    this.urlState.set({
+      page: 1,
+      pageSize: newPageSize
+    });
+  }
 }

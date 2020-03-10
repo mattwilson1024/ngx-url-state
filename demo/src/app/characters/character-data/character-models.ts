@@ -10,3 +10,8 @@ export interface ICharacter {
   note: string;
   tags: ICharacterTag[];
 }
+
+export interface IPaginatedResultSet<T> {
+  results: T[];
+  total: number;
+}

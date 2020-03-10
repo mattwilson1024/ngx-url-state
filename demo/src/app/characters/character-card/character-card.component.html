@@ -1,0 +1,16 @@
+
+
+
+<div class="character-card">
+  <nz-avatar class="character-pic" nzIcon="user" nzSize="small"></nz-avatar>
+
+  <div class="charater-info">
+    <p>{{ character.lastName }}, {{ character.firstName }}</p>
+
+    <div class="tags-container">
+      <nz-tag *ngFor="let tag of character.tags">{{ tag.name }}</nz-tag>
+      <nz-tag *ngIf="!character.tags.length">character</nz-tag>
+    </div>
+  </div>
+
+</div>

@@ -1,5 +1,21 @@
+<div class="characters-page">
 
-<ul>
-  <li *ngFor="let character of characters$ | async">{{ character.firstName }}</li>
-</ul>
+  <main *ngIf="resultSet$ | async as resultSet">
+    <h1>Results</h1>
 
+    <app-character-card
+      *ngFor="let character of resultSet.results"
+      [character]="character">
+    </app-character-card>
+  </main>
+
+  <nz-pagination
+    [nzPageIndex]="urlState.params.page | async"
+    [nzPageSize]="urlState.params.pageSize | async"
+    [nzTotal]="(resultSet$ | async)?.total"
+    [nzShowSizeChanger]="true"
+    (nzPageIndexChange)="changePage($event)"
+    (nzPageSizeChange)="changePageSize($event)">
+  </nz-pagination>
+
+</div>
