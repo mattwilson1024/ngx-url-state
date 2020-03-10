@@ -40,7 +40,7 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
         },
         pageSize: {
           mapper: IntMapper,
-          defaultValue: 10
+          defaultValue: 5
         },
       }
     });
