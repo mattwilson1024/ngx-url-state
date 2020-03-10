@@ -131,6 +131,13 @@
   optionalDependencies:
     parse5 "^5.0.0"
 
+"@angular/cdk@^9.1.1":
+  version "9.1.1"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-9.1.1.tgz#343901c5d6c0d6c502ccbd075cb9e17ea3bc05f5"
+  integrity sha512-yzssAqbllGYgX+WeSYLjmEWtXVG5UPZwA0+dPlh+g85nG7b70DVRVYBi8PJySydsfPX/JMherFUU9h0QOWhhZw==
+  optionalDependencies:
+    parse5 "^5.0.0"
+
 "@angular/cli@~9.0.5":
   version "9.0.5"
   resolved "https://registry.yarnpkg.com/@angular/cli/-/cli-9.0.5.tgz#ba3dc3051f1aa8884f037c7246256439ee2fe814"
