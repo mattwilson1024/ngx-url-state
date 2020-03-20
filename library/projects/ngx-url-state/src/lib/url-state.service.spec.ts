@@ -20,7 +20,7 @@ interface IExampleParams {
 class TestPageComponent implements OnInit {
   public urlState: UrlState<IExampleParams>;
 
-  constructor(private activatedRoute: ActivatedRoute,
+  constructor(public activatedRoute: ActivatedRoute,
               private urlStateService: UrlStateService) {}
 
   ngOnInit() {
@@ -132,28 +132,29 @@ describe('NgxUrlStateService', () => {
     });
   });
 
-  // describe('set method', () => {
-  //   let allParamsEmissions: IExampleParams[];
+  describe('set method', () => {
+    let allParamsEmissions: IExampleParams[];
 
-  //   beforeEach(() => {
-  //     allParamsEmissions = [];
-  //     spectator.component.urlState.allParams.subscribe(result => allParamsEmissions.push(result));
-  //   });
+    beforeEach(() => {
+      allParamsEmissions = [];
+      spectator.component.urlState.allParams.subscribe(result => allParamsEmissions.push(result));
+    });
 
-  //   it('should trigger navigation', async () => {
-  //     spectator.inject(ActivatedRoute).queryParamMap.subscribe(x => console.log(x));
+    it('should trigger navigation when a parameter is changed via the library, adding to the history stack', async () => {
+      const navigateSpy = spyOn(spectator.router, 'navigate');
 
+      spectator.component.urlState.set({
+        page: 2
+      });
 
-  //     spectator.component.urlState.set({
-  //       page: 2
-  //     });
-  //     await spectator.fixture.whenStable();
-
-  //     // expect(spectator.activatedRouteStub.snapshot.queryParamMap.get('page')).toBe('2');
-  //     // await spectator.fixture.whenStable();
-
-  //     // expect(44).toBe('2');
-  //   });
-  // });
+      expect(navigateSpy).toHaveBeenCalled();
+      expect(navigateSpy).toHaveBeenCalledWith([], (expect as any).objectContaining({
+        replaceUrl: false,
+        queryParams: {
+          page: '2'
+        }
+      }));
+    });
+  });
 
 });
