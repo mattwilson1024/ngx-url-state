@@ -1,6 +1,6 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NzPaginationComponent } from 'ng-zorro-antd';
 import { UrlStateService } from 'ngx-url-state';
@@ -19,8 +19,8 @@ describe('CharactersPageComponent', () => {
       MockComponent(NzPaginationComponent)
     ],
     providers: [
-      mockProvider(CharacterDataService),
-      mockProvider(UrlStateService),
+      CharacterDataService,
+      UrlStateService
     ],
     imports: [
       RouterTestingModule,

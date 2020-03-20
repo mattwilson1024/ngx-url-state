@@ -18,7 +18,7 @@
     "test:lib:watch": "jest -o --watch --config ./projects/ngx-url-state/jest.config.js",
     "test:demo": "jest --config ./projects/demo/jest.config.js",
     "test:demo:watch": "jest -o --watch --config ./projects/demo/jest.config.js",
-    "test": "yarn test:lib && yarn test:showcase"
+    "test": "yarn test:lib && yarn test:demo"
   },
   "dependencies": {
     "@angular/animations": "~9.0.5",
