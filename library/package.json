@@ -7,9 +7,11 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "ng": "ng",
+    "dev:lib": "ng build ngx-url-state --watch",
     "start": "ng serve",
-    "build": "ng build ngx-url-state --prod",
+    "build:lib:dev": "ng build ngx-url-state",
+    "build:lib:prod": "ng build ngx-url-state --prod",
+    "ng": "ng",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -23,6 +25,7 @@
     "@angular/platform-browser": "~9.0.5",
     "@angular/platform-browser-dynamic": "~9.0.5",
     "@angular/router": "~9.0.5",
+    "ng-zorro-antd": "8.5.2",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

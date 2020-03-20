@@ -1,0 +1,22 @@
+.character-card {
+  display: flex;
+  margin: 5px 5px 15px 5px;
+
+  .character-pic {
+    flex: 0 0 auto;
+  }
+
+  .charater-info {
+    flex: 1 1 auto;
+    margin-left: 5px;
+
+    p {
+      margin-bottom: 3px;
+      font-weight: bold;
+    }
+
+    .tags-container {
+      height: 30px;
+    }
+  }
+}
