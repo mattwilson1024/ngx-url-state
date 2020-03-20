@@ -23,7 +23,8 @@
         "dist/ngx-url-state/ngx-url-state",
         "dist/ngx-url-state"
       ]
-    }
+    },
+    "esModuleInterop": true
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
