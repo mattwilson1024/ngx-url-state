@@ -7,9 +7,11 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "ng": "ng",
+    "dev:lib": "ng build ngx-url-state --watch",
     "start": "ng serve",
-    "build": "ng build ngx-url-state --prod",
+    "build:lib:dev": "ng build ngx-url-state",
+    "build:lib:prod": "ng build ngx-url-state --prod",
+    "ng": "ng",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
