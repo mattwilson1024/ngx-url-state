@@ -37,21 +37,47 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.urlState = this.urlStateService.listen<ICharactersParams>({
+    this.urlState = this.urlStateService.create<ICharactersParams>({
       activatedRoute: this.activatedRoute,
-      componentDestroyed$: this.componentDestroyed$,
-      paramDefinitions: {
-        page: {
-          mapper: IntMapper,
-          defaultValue: 1
-        },
-        pageSize: {
-          mapper: IntMapper,
-          defaultValue: 5
-        },
-        search: {}
-      }
+      componentDestroyed$: this.componentDestroyed$
     });
+
+    this.urlState.listen({
+      page: {
+        mapper: IntMapper,
+        defaultValue: 1
+      },
+      pageSize: {
+        mapper: IntMapper,
+        defaultValue: 5
+      },
+      search: {}
+    });
+
+    // Handling re-listening with new defaults
+    // setTimeout(() => {
+    //   this.urlState.listen({
+    //     page: {
+    //       mapper: IntMapper,
+    //       defaultValue: 1
+    //     },
+    //     pageSize: {
+    //       mapper: IntMapper,
+    //       defaultValue: 10
+    //     },
+    //     search: {}
+    //   })
+    //
+    //   this.resultSet$ = combineLatest([
+    //     this.urlState.params.page,
+    //     this.urlState.params.pageSize,
+    //     this.urlState.params.search
+    //   ]).pipe(
+    //     switchMap(([page, pageSize, search]) => this.characterDataService.getCharacters$(page, pageSize, search))
+    //   );
+    //
+    //   this.urlState.set({ pageSize: undefined });
+    // }, 2000);
 
     this.resultSet$ = combineLatest([
       this.urlState.params.page,

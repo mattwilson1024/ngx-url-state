@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
 import { DEFAULT_MAPPER } from './mappers';
-import { BehaviorSubjectsFor, NavigationMode, ObservablesFor, StringsFor, UrlParamDefsFor, UrlStateConfig, UrlStateParamDef } from './url-state.types';
+import { BehaviorSubjectsFor, NavigationMode, ObservablesFor, StringsFor, UrlParamDefsFor, UrlStateConstructorConfig, UrlStateParamDef } from './url-state.types';
 
 export class UrlState<T> {
   // Config properties
@@ -17,16 +17,26 @@ export class UrlState<T> {
   private combinedParamsStringSubject$: BehaviorSubject<StringsFor<T>>;
 
   // External - exposed to consumer
-  public readonly params: ObservablesFor<T>;
-  public readonly allParams: Observable<T>;
+  public params: ObservablesFor<T>;
+  public allParams: Observable<T>;
   public snapshot: T;
 
-  constructor(config: UrlStateConfig<T>, router: Router) {
+  constructor(config: UrlStateConstructorConfig<T>, router: Router) {
     // Store config
     this.activatedRoute = config.activatedRoute;
-    this.destroy$ = config.componentDestroyed$ || new Subject<void>();
-    this.paramDefs = config.paramDefinitions;
+    config.componentDestroyed$?.subscribe({
+      next: () => this.destroy$.next(),
+      complete: () => this.destroy$.complete(),
+    });
     this.router = router;
+  }
+
+  public listen(paramDefs: UrlParamDefsFor<T>): void {
+    this.destroy$?.next();
+    this.destroy$?.complete();
+    this.destroy$ = new Subject<void>();
+
+    this.paramDefs = paramDefs;
 
     // Grab the initial params, including any defaults which we pre-emptyively assume will be applied
     const initialParamStrings = this.getParamStrings(this.activatedRoute.snapshot.queryParamMap);
@@ -79,7 +89,6 @@ export class UrlState<T> {
       takeUntil(this.destroy$),
     ).subscribe(queryParamMap => {
       const currentParamStrings = this.getParamStrings(queryParamMap);
-
       this.combinedParamsStringSubject$.next(currentParamStrings);
       Object.keys(currentParamStrings).forEach(paramName => {
         this.paramStringSubjects[paramName].next(currentParamStrings[paramName]);
@@ -167,13 +176,19 @@ export class UrlState<T> {
     return currentParams as StringsFor<T>;
   }
 
-  public set(paramsToChange: Partial<T>, navigationMode: NavigationMode =  NavigationMode.AddToHistoryStack): Promise<boolean> {
+  public set(paramsToChange: Partial<T>, navigationMode: NavigationMode = NavigationMode.AddToHistoryStack): Promise<boolean> {
     const queryParams: Params = {};
 
     Object.keys(paramsToChange).forEach(paramName => {
       const paramDef = this.getParamDef(paramName);
       if (paramDef) {
-        const convertedToString = this.convertParamToString(paramsToChange[paramName], paramDef);
+        let newParamValue = paramsToChange[paramName];
+
+        if (newParamValue === undefined && paramDef.defaultValue !== undefined) {
+          newParamValue = paramDef.defaultValue;
+        }
+
+        const convertedToString = this.convertParamToString(newParamValue, paramDef);
         queryParams[paramName] = convertedToString;
       }
     });

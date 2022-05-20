@@ -29,8 +29,7 @@ export enum NavigationMode {
   ReplaceHistory
 }
 
-export interface UrlStateConfig<T> {
+export interface UrlStateConstructorConfig<T> {
   activatedRoute: ActivatedRoute;
   componentDestroyed$: Subject<void>;
-  paramDefinitions: UrlParamDefsFor<T>;
 }
