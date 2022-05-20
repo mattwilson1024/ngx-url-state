@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IntMapper, StringMapper, UrlState, UrlStateService } from 'ngx-url-state';
+import { IntMapper, UrlState, UrlStateService } from 'ngx-url-state';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 import { PaginationModule } from '../pagination/pagination.component';
@@ -49,9 +49,7 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
           mapper: IntMapper,
           defaultValue: 5
         },
-        search: {
-          mapper: StringMapper
-        }
+        search: {}
       }
     });
 

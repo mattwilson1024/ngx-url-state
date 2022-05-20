@@ -20,7 +20,7 @@ export type UrlParamDefsFor<T> = {
 };
 
 export interface UrlStateParamDef<P> {
-  mapper: UrlParamMapper<P>;
+  mapper?: UrlParamMapper<P>;
   defaultValue?: P;
 }
 
