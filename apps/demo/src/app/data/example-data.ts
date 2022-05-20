@@ -1,4 +1,4 @@
-import { ICharacter } from './character-models';
+import { ICharacter } from './data.models';
 
 export const HARRY_POTTER_CHARACTERS: ICharacter[] = [
   {

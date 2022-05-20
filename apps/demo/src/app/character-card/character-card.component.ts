@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, NgModule } from '@angular/core';
 
-import { ICharacter } from '../character-data/character-models';
+import { ICharacter } from '../data/data.models';
 
 @Component({
   selector: 'app-character-card',

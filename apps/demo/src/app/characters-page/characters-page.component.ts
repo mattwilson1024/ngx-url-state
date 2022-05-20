@@ -5,10 +5,10 @@ import { ActivatedRoute } from '@angular/router';
 import { IntMapper, StringMapper, UrlState, UrlStateService } from 'ngx-url-state';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
-import { PaginationModule } from '../../pagination/pagination.component';
+import { PaginationModule } from '../pagination/pagination.component';
 import { CharacterCardModule } from '../character-card/character-card.component';
-import { CharacterDataService } from '../character-data/character-data.service';
-import { ICharacter, IPaginatedResultSet } from '../character-data/character-models';
+import { CharacterDataService } from '../data/data.service';
+import { ICharacter, IPaginatedResultSet } from '../data/data.models';
 
 interface ICharactersParams {
   page: number;

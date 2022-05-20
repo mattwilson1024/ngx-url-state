@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-
-import { HARRY_POTTER_CHARACTERS } from './character-data';
-import { ICharacter, IPaginatedResultSet } from './character-models';
+import { HARRY_POTTER_CHARACTERS } from './example-data';
+import { ICharacter, IPaginatedResultSet } from './data.models';
 
 @Injectable({
   providedIn: 'root'
