@@ -17,21 +17,9 @@ export class UrlState<T> {
   private combinedParamsStringSubject$: BehaviorSubject<StringsFor<T>>;
 
   // External - exposed to consumer
-  private paramObservables: ObservablesFor<T>;
-  private allParams$: Observable<T>;
-  private lastestSnapshot: T;
-
-  public get params(): ObservablesFor<T> {
-    return this.paramObservables;
-  }
-
-  public get allParams(): Observable<T> {
-    return this.allParams$;
-  }
-
-  public get snapshot(): T {
-    return this.lastestSnapshot;
-  }
+  public readonly params: ObservablesFor<T>;
+  public readonly allParams: Observable<T>;
+  public snapshot: T;
 
   constructor(config: UrlStateConfig<T>, router: Router) {
     // Store config
@@ -48,12 +36,12 @@ export class UrlState<T> {
 
     // Create individual BehaviorSubjects for each defined parameter
     this.paramStringSubjects = {} as BehaviorSubjectsFor<StringsFor<T>>;
-    this.paramObservables = {} as ObservablesFor<T>;
+    this.params = {} as ObservablesFor<T>;
     Object.keys(this.paramDefs).forEach(paramName => {
       const paramDef = this.getParamDef(paramName);
       const paramStringSubject$ = new BehaviorSubject(initialParamStrings[paramName]);
       this.paramStringSubjects[paramName] = paramStringSubject$;
-      this.paramObservables[paramName] = paramStringSubject$.pipe(
+      this.params[paramName] = paramStringSubject$.pipe(
         takeUntil(this.destroy$),
         distinctUntilChanged(),
         map(stringValue => this.convertParamFromString(stringValue, paramDef)),
@@ -64,7 +52,7 @@ export class UrlState<T> {
     // Setup the `allParams` observable which provides the user with a way of getting the full set
     // of parameters whenever _any_ of them change
     this.combinedParamsStringSubject$ = new BehaviorSubject<StringsFor<T>>(initialParamStrings);
-    this.allParams$ = this.combinedParamsStringSubject$.pipe(
+    this.allParams = this.combinedParamsStringSubject$.pipe(
       takeUntil(this.destroy$),
       distinctUntilChanged((prev, curr) => {
         return Object.keys(this.paramDefs).every(paramName => prev[paramName] === curr[paramName]);
@@ -81,9 +69,9 @@ export class UrlState<T> {
     );
 
     // Store a "snapshot" which is the latest version of all parameters, incase the consumer needs to read the value without observables
-    this.allParams$.pipe(
+    this.allParams.pipe(
       takeUntil(this.destroy$),
-      tap(allParams => this.lastestSnapshot = allParams)
+      tap(allParams => this.snapshot = allParams)
     ).subscribe();
 
     // Watch router for changes
