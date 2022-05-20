@@ -17,8 +17,7 @@ export class CharacterDataService {
     const matchingCharacters = HARRY_POTTER_CHARACTERS.filter(character => !searchTerm
                           || character.firstName.toLowerCase().includes(searchTermLowerCase)
                           || character.lastName.toLowerCase().includes(searchTermLowerCase)
-                          || `${character.firstName} ${character.lastName}`.toLowerCase().includes(searchTermLowerCase)
-                          || character.tags.some(tag => tag.name.toLowerCase().includes(searchTermLowerCase)));
+                          || `${character.firstName} ${character.lastName}`.toLowerCase().includes(searchTermLowerCase));
 
     const characters = matchingCharacters
       .slice(startIndex, startIndex + pageSize)

@@ -1,0 +1,11 @@
+.pagination {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+
+  .page-size label {
+    color: #999;
+    margin-left: 20px;
+    margin-right: 10px;
+  }
+}
