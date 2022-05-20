@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "libs/ngx-url-state",
+  "sourceRoot": "libs/ngx-url-state/src",
+  "prefix": "ngx-url-state",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/libs/ngx-url-state"],
+      "options": {
+        "project": "libs/ngx-url-state/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/ngx-url-state/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/ngx-url-state/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/ngx-url-state"],
+      "options": {
+        "jestConfig": "libs/ngx-url-state/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/ngx-url-state/src/**/*.ts",
+          "libs/ngx-url-state/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
