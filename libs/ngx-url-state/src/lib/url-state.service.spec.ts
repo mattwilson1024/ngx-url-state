@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { UrlStateService } from './url-state.service';
 
-describe('UrlStateService', () => {
+describe('NgxUrlStateService', () => {
   let service: UrlStateService;
 
   beforeEach(() => {

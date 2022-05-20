@@ -1,19 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { UrlStateService } from 'ngx-url-state';
+import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ngx-url-state-root',
+  selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
-  title = 'demo';
+export class AppComponent {
 
-  constructor(
-    private urlStateService: UrlStateService,
-  ) {}
-
-  ngOnInit(): void {
-    console.log(this.urlStateService.helloWorld());
-  }
 }

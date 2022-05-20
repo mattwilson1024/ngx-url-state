@@ -1,0 +1,34 @@
+<div>
+
+  <button [disabled]="currentPage === 1" (click)="onPageClicked(1)">
+    First
+  </button>
+
+  <div class="btn-group">
+    <button
+      *ngFor="let page of visiblePages"
+      [disabled]="currentPage === page"
+      (click)="onPageClicked(page)"
+    >
+      {{ page }}
+    </button>
+  </div>
+
+  <button [disabled]="currentPage === pageCount" (click)="onPageClicked(pageCount)">
+    Last
+  </button>
+
+  <div class="form-group form-inline page-size">
+    <label for="PageSize">Page size:</label>
+    <select #pageSize (change)="onPageSizeUpdated(pageSize.value)" id="PageSize" class="form-control">
+      <option
+        *ngFor="let pageSize of suggestedPagesSizes"
+        [value]="pageSize"
+        [selected]="currentPageSize === pageSize"
+      >
+        {{pageSize}}
+      </option>
+    </select>
+  </div>
+
+</div>
