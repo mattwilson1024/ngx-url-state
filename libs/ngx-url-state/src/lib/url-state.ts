@@ -3,7 +3,16 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 
 import { DEFAULT_MAPPER } from './mappers';
-import { BehaviorSubjectsFor, NavigationMode, ObservablesFor, StringsFor, UrlParamDefsFor, UrlStateConstructorConfig, UrlStateParamDef } from './url-state.types';
+import {
+  BehaviorSubjectsFor,
+  NavigationMode,
+  ObservablesFor,
+  StringsFor,
+  UrlParamDefaultValueFn,
+  UrlParamDefsFor,
+  UrlStateConstructorConfig,
+  UrlStateParamDef
+} from './url-state.types';
 
 export class UrlState<T> {
   // Config properties
@@ -38,8 +47,8 @@ export class UrlState<T> {
 
     this.paramDefs = paramDefs;
 
-    // Grab the initial params, including any defaults which we pre-emptyively assume will be applied
-    const initialParamStrings = this.getParamStrings(this.activatedRoute.snapshot.queryParamMap);
+    // Grab the initial params, including any defaults which we pre-emptively assume will be applied
+    const initialParamStrings = this.getParamStrings(this.activatedRoute.snapshot.queryParams as Partial<T>);
 
     // Handle defaults
     this.applyMissingParamsToUrl();
@@ -85,10 +94,10 @@ export class UrlState<T> {
     ).subscribe();
 
     // Watch router for changes
-    this.activatedRoute.queryParamMap.pipe(
+    this.activatedRoute.queryParams.pipe(
       takeUntil(this.destroy$),
-    ).subscribe(queryParamMap => {
-      const currentParamStrings = this.getParamStrings(queryParamMap);
+    ).subscribe(queryParams => {
+      const currentParamStrings = this.getParamStrings(queryParams as Partial<T>);
       this.combinedParamsStringSubject$.next(currentParamStrings);
       Object.keys(currentParamStrings).forEach(paramName => {
         this.paramStringSubjects[paramName].next(currentParamStrings[paramName]);
@@ -106,7 +115,7 @@ export class UrlState<T> {
     });
   }
 
-  private convertParamFromString<P>(stringValue: string|null|undefined, paramDef: UrlStateParamDef<P>): P {
+  private convertParamFromString<P>(stringValue: string|null|undefined, paramDef: UrlStateParamDef<P, T>): P {
     if (stringValue === null || stringValue === undefined) {
       return undefined;
     }
@@ -116,56 +125,65 @@ export class UrlState<T> {
     return paramDef.mapper ? paramDef.mapper.fromString(stringValue) : DEFAULT_MAPPER.fromString(stringValue);
   }
 
-  private convertParamToString<P>(paramValue: P|null|undefined, paramDef: UrlStateParamDef<P>): string {
+  private convertParamToString<P>(paramValue: P|null|undefined, paramDef: UrlStateParamDef<P, T>): string {
     if (paramValue === null || paramValue === undefined) {
       return undefined;
     }
     return paramDef.mapper ? paramDef.mapper.toString(paramValue) : DEFAULT_MAPPER.toString(paramValue);
   }
 
-  private identifyMissingParams(): string[] {
-    const existingQueryParamMap = this.activatedRoute.snapshot.queryParamMap;
-    return Object.keys(this.paramDefs)
-      .filter(paramName => {
-        const paramDef = this.getParamDef(paramName);
-        return paramDef && !existingQueryParamMap.has(paramName) && paramDef.defaultValue !== undefined;
-      });
+  private identifyMissingParams(existingParams: Partial<T>): Partial<T> {
+    const existingParamsClone = { ...existingParams };
+    const paramsToUpdate: Partial<T> = {}
+
+    Object.keys(this.paramDefs).forEach(paramName => {
+      if (!Object.keys(existingParamsClone).includes(paramName)) {
+        const defaultParamValue = this.getDefaultParamValue(this.getParamDef(paramName).defaultValue, existingParamsClone);
+        if (defaultParamValue !== undefined) {
+          existingParamsClone[paramName] = defaultParamValue;
+          paramsToUpdate[paramName] = defaultParamValue;
+        }
+      }
+    });
+
+    return paramsToUpdate;
   }
 
-  private applyMissingParamsToUrl(): void {
-    const missingParamNames = this.identifyMissingParams();
-    const hasMissingParams = Object.keys(missingParamNames).length > 0;
-    if (hasMissingParams) {
-      const paramsToAddToUrl: Partial<T> = {};
-      missingParamNames.forEach(paramName => {
-        const paramDef = this.getParamDef(paramName);
-        if (paramDef) {
-          const defaultValue = paramDef.defaultValue;
-          paramsToAddToUrl[paramName] = defaultValue;
-        }
-      });
-
-      this.set(paramsToAddToUrl, NavigationMode.ReplaceHistory);
+  private getDefaultParamValue<P>(defaultValue: P | UrlParamDefaultValueFn<P, T>, paramValues: Partial<T>): P|undefined {
+    switch (typeof defaultValue) {
+      case 'function':
+        return (defaultValue as UrlParamDefaultValueFn<P, T>)(paramValues);
+      default:
+        return defaultValue;
     }
   }
 
-  private getParamDef<P>(paramName: string): UrlStateParamDef<P> {
+  private applyMissingParamsToUrl(): void {
+    const paramsToUpdate = this.identifyMissingParams(this.activatedRoute.snapshot.queryParams as Partial<T>);
+
+    if (Object.keys(paramsToUpdate)?.length) {
+      this.set(paramsToUpdate, NavigationMode.ReplaceHistory);
+    }
+
+  }
+
+  private getParamDef<P>(paramName: string): UrlStateParamDef<P, T> {
     return this.paramDefs[paramName];
   }
 
-  public getParamStrings(queryParamMap: ParamMap): StringsFor<T> {
-    const missingParamNames = this.identifyMissingParams();
+  public getParamStrings(queryParams: Partial<T>): StringsFor<T> {
+    const missingParams = this.identifyMissingParams(queryParams);
     const currentParams: Partial<StringsFor<T>> = {};
 
     Object.keys(this.paramDefs).forEach(paramName => {
-      const paramDef: UrlStateParamDef<unknown> = this.paramDefs[paramName];
+      const paramDef: UrlStateParamDef<unknown, T> = this.paramDefs[paramName];
 
       if (paramDef) {
         let paramStringValue;
-        if (queryParamMap.has(paramName)) {
-          paramStringValue = queryParamMap.get(paramName);
-        } else if (missingParamNames.includes(paramName)) {
-          paramStringValue = this.convertParamToString(paramDef.defaultValue, paramDef);
+        if (Object.keys(queryParams).includes(paramName)) {
+          paramStringValue = queryParams[paramName];
+        } else if (Object.keys(missingParams).includes(paramName)) {
+          paramStringValue = this.convertParamToString(missingParams[paramName], paramDef);
         } else {
           paramStringValue = undefined;
         }
@@ -179,6 +197,11 @@ export class UrlState<T> {
   public set(paramsToChange: Partial<T>, navigationMode: NavigationMode = NavigationMode.AddToHistoryStack): Promise<boolean> {
     const queryParams: Params = {};
 
+    /**
+     * TODO: Here we need to identify if we're setting any parameters to undefined that should not be undefined in the current context.
+     * We need to determine if the final state of the URL makes sense given the dynamic defaults of parameter definitions.
+     * Ref: identifyMissingParams()
+     */
     Object.keys(paramsToChange).forEach(paramName => {
       const paramDef = this.getParamDef(paramName);
       if (paramDef) {

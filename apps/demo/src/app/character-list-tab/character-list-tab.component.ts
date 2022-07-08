@@ -1,19 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, NgModule, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { IntMapper, UrlState, UrlStateService } from 'ngx-url-state';
+import { RouterModule } from '@angular/router';
+import { UrlState } from 'ngx-url-state';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 import { ICharacter, IPaginatedResultSet } from '../data/data.models';
 import { CharacterDataService } from '../data/data.service';
 import { PaginationModule } from '../pagination/pagination.component';
-
-interface ICharactersParams {
-  page: number;
-  pageSize: number;
-  search?: string;
-}
+import { ICharactersPageParams } from '../characters-page/characters-page-param.model';
 
 @Component({
   selector: 'app-character-list-tab',
@@ -21,36 +16,19 @@ interface ICharactersParams {
   styleUrls: ['./character-list-tab.component.scss'],
 })
 export class CharacterListTabComponent implements OnInit, OnDestroy {
-  public urlState: UrlState<ICharactersParams>;
 
-  public resultSet$: Observable<IPaginatedResultSet<ICharacter>>;
+  @Input() urlState: UrlState<ICharactersPageParams>;
 
   private componentDestroyed$ = new Subject<void>();
   public searchField: FormControl;
 
+  public resultSet$: Observable<IPaginatedResultSet<ICharacter>>;
+
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private urlStateService: UrlStateService,
     private characterDataService: CharacterDataService
   ) { }
 
   ngOnInit(): void {
-    this.urlState = this.urlStateService.create<ICharactersParams>({
-      activatedRoute: this.activatedRoute,
-      componentDestroyed$: this.componentDestroyed$
-    });
-
-    this.urlState.listen({
-      page: {
-        mapper: IntMapper,
-        defaultValue: 1
-      },
-      pageSize: {
-        mapper: IntMapper,
-        defaultValue: 5
-      },
-      search: {}
-    });
 
     this.resultSet$ = combineLatest([
       this.urlState.params.page,

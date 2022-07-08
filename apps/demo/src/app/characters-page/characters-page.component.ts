@@ -1,14 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { UrlState, UrlStateService } from 'ngx-url-state';
+import { IntMapper, UrlState, UrlStateService } from 'ngx-url-state';
 import { Subject } from 'rxjs';
 import { CharacterDetailsTabModule } from '../character-details-tab/character-details-tab.component';
 import { CharacterListTabModule } from '../character-list-tab/character-list-tab.component';
-
-interface ICharactersParams {
-  tabId: string;
-}
+import { ICharactersPageParams } from './characters-page-param.model';
 
 @Component({
   selector: 'app-characters-page',
@@ -17,7 +14,7 @@ interface ICharactersParams {
 })
 export class CharactersPageComponent implements OnInit, OnDestroy {
 
-  public urlState: UrlState<ICharactersParams>;
+  public urlState: UrlState<ICharactersPageParams>;
 
   private componentDestroyed$ = new Subject<void>();
 
@@ -27,7 +24,7 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.urlState = this.urlStateService.create<ICharactersParams>({
+    this.urlState = this.urlStateService.create<ICharactersPageParams>({
       activatedRoute: this.activatedRoute,
       componentDestroyed$: this.componentDestroyed$
     });
@@ -36,6 +33,15 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
       tabId: {
         defaultValue: `characters`
       },
+      page: {
+        mapper: IntMapper,
+        defaultValue: 1
+      },
+      pageSize: {
+        mapper: IntMapper,
+        defaultValue: 5
+      },
+      search: {}
     });
   }
 

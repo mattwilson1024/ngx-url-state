@@ -8,6 +8,7 @@
     <app-character-list-tab
       class="tab"
       [class.tab-selected]="(urlState.params.tabId | async) === 'characters'"
+      [urlState]="urlState"
     >
     </app-character-list-tab>
 

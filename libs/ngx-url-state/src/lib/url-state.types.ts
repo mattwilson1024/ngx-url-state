@@ -16,13 +16,16 @@ export type ObservablesFor<T> = {
 };
 
 export type UrlParamDefsFor<T> = {
-  [P in keyof T]: UrlStateParamDef<T[P]>
+  [P in keyof T]: UrlStateParamDef<T[P], T>
 };
 
-export interface UrlStateParamDef<P> {
+export interface UrlStateParamDef<P, T> {
   mapper?: UrlParamMapper<P>;
-  defaultValue?: P;
+  defaultValue?: P | UrlParamDefaultValueFn<P, T>;
+  // TODO: Add an ordinal to determine order of importance of default value calculation.
 }
+
+export type UrlParamDefaultValueFn<P, T> = (params: Partial<T>) => P | undefined;
 
 export enum NavigationMode {
   AddToHistoryStack,

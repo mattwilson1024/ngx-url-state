@@ -1,15 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { UrlState, UrlStateService } from 'ngx-url-state';
+import { UrlState } from 'ngx-url-state';
 import { Observable, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { ICharacter } from '../data/data.models';
 import { CharacterDataService } from '../data/data.service';
-
-interface ICharacterDetailsParams {
-  id: string;
-}
+import { ICharactersPageParams } from '../characters-page/characters-page-param.model';
 
 @Component({
   selector: 'app-character-details-tab',
@@ -18,28 +14,17 @@ interface ICharacterDetailsParams {
 })
 export class CharacterDetailsTabComponent implements OnInit, OnDestroy {
 
-  public urlState: UrlState<ICharacterDetailsParams>;
+  public urlState: UrlState<ICharactersPageParams>;
 
   public character$: Observable<ICharacter>;
 
   private componentDestroyed$ = new Subject<void>();
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private urlStateService: UrlStateService,
     private characterDataService: CharacterDataService
   ) { }
 
   ngOnInit(): void {
-    this.urlState = this.urlStateService.create<ICharacterDetailsParams>({
-      activatedRoute: this.activatedRoute,
-      componentDestroyed$: this.componentDestroyed$
-    });
-
-    this.urlState.listen({
-      id: {},
-    });
-
     this.character$ = this.urlState.params.id
       .pipe(
         switchMap(id => this.characterDataService.getCharacter$(id)),
