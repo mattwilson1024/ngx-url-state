@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { IntMapper, UrlState, UrlStateService } from 'ngx-url-state';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
@@ -99,8 +99,9 @@ export class CharacterListTabComponent implements OnInit, OnDestroy {
   declarations: [CharacterListTabComponent],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     PaginationModule,
+    ReactiveFormsModule,
+    RouterModule,
   ],
   exports: [CharacterListTabComponent],
 })

@@ -9,7 +9,11 @@
   <h1>Results</h1>
 
   <div *ngFor="let character of resultSet.results" class="character-card">
-    <p class="character-name">{{ character.lastName }}, {{ character.firstName }}</p>
+    <p class="character-name">
+      <a [routerLink]="['/harry-potter']" [queryParams]="{ tabId: 'character-details', id: character.id }">
+        {{ character.lastName }}, {{ character.firstName }}
+      </a>
+    </p>
     <p class="character-note">{{ character.note }}</p>
   </div>
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HARRY_POTTER_CHARACTERS } from './example-data';
 import { ICharacter, IPaginatedResultSet } from './data.models';
+import { HARRY_POTTER_CHARACTERS } from './example-data';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +27,10 @@ export class CharacterDataService {
       total: matchingCharacters.length
     };
     return of(paginatedResultSet);
+  }
+
+  getCharacter$(id: string): Observable<ICharacter> {
+    return of(HARRY_POTTER_CHARACTERS.find(character => character.id === id));
   }
 
 }

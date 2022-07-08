@@ -1,1 +1,8 @@
-<p>character-details-tab works!</p>
+<div *ngIf="character$ | async as character else noCharacterSelected">
+  <h1>{{ character.firstName }} {{ character.lastName }}</h1>
+  <p>{{ character.note }}</p>
+</div>
+
+<ng-template #noCharacterSelected>
+  No character selected
+</ng-template>
