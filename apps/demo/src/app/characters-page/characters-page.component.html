@@ -4,36 +4,18 @@
     <a [routerLink]="[ '/harry-potter' ]" [queryParams]="{ tabId: 'character-details' }">Character Details</a>
   </div>
   <div class="right-col">
-    <div *ngIf="(urlState.params.tabId | async) === 'characters'">Characters tab</div>
-    <div *ngIf="(urlState.params.tabId | async) === 'character-details'">Character details tab</div>
+
+    <app-character-list-tab
+      class="tab"
+      [class.tab-selected]="(urlState.params.tabId | async) === 'characters'"
+    >
+    </app-character-list-tab>
+
+    <app-character-details-tab
+      class="tab"
+      [class.tab-selected]="(urlState.params.tabId | async) === 'character-details'"
+    >
+    </app-character-details-tab>
+
   </div>
 </div>
-<!--<div class="characters-page">-->
-
-<!--  <input-->
-<!--    type="text"-->
-<!--    class="search-input"-->
-<!--    [formControl]="searchField"-->
-<!--    placeholder="Search"-->
-<!--  />-->
-
-<!--  <main *ngIf="resultSet$ | async as resultSet">-->
-<!--    <h1>Results</h1>-->
-
-<!--    <app-character-card-->
-<!--      *ngFor="let character of resultSet.results"-->
-<!--      [character]="character"-->
-<!--    >-->
-<!--    </app-character-card>-->
-<!--  </main>-->
-
-<!--  <app-pagination-->
-<!--    [currentPage]="urlState.params.page | async"-->
-<!--    [currentPageSize]="urlState.params.pageSize | async"-->
-<!--    [itemCount]="(resultSet$ | async)?.total"-->
-<!--    (pageChange)="onPageChange($event)"-->
-<!--    (pageSizeChange)="onPageSizeChange($event)"-->
-<!--  >-->
-<!--  </app-pagination>-->
-
-<!--</div>-->

@@ -1,0 +1,25 @@
+<input
+  type="text"
+  class="search-input"
+  [formControl]="searchField"
+  placeholder="Search"
+/>
+
+<main *ngIf="resultSet$ | async as resultSet">
+  <h1>Results</h1>
+
+  <div *ngFor="let character of resultSet.results" class="character-card">
+    <p class="character-name">{{ character.lastName }}, {{ character.firstName }}</p>
+    <p class="character-note">{{ character.note }}</p>
+  </div>
+
+</main>
+
+<app-pagination
+  [currentPage]="urlState.params.page | async"
+  [currentPageSize]="urlState.params.pageSize | async"
+  [itemCount]="(resultSet$ | async)?.total"
+  (pageChange)="onPageChange($event)"
+  (pageSizeChange)="onPageSizeChange($event)"
+>
+</app-pagination>

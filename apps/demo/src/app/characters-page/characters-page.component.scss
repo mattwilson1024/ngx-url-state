@@ -1,23 +1,25 @@
 .tabs {
   display: flex;
   height: 100vh;
+
   .left-col {
     display: flex;
     flex-direction: column;
   }
+
   .right-col {
     flex: 1;
+  }
+
+  .tab {
+    display: none;
+
+    &.tab-selected {
+      display: unset;
+    }
   }
 }
 
 .characters-page {
   margin: 20px;
-
-  .search-input {
-    margin-bottom: 10px;
-  }
-
-  main {
-    margin-bottom: 40px;
-  }
 }
