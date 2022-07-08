@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { IntMapper, UrlState, UrlStateService } from 'ngx-url-state';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import { CharacterDataService } from '../data/data.service';
 import { ICharacter, IPaginatedResultSet } from '../data/data.models';
 
 interface ICharactersParams {
+  tabId: string;
   page: number;
   pageSize: number;
   search?: string;
@@ -43,6 +44,9 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
     });
 
     this.urlState.listen({
+      tabId: {
+        defaultValue: `characters`
+      },
       page: {
         mapper: IntMapper,
         defaultValue: 1
@@ -129,6 +133,7 @@ export class CharactersPageComponent implements OnInit, OnDestroy {
     CommonModule,
     ReactiveFormsModule,
     PaginationModule,
+    RouterModule,
   ],
   exports: [ CharactersPageComponent ],
 })
